@@ -2,11 +2,12 @@ import unittest
 from io import StringIO
 from unittest.mock import patch
 from main.core import MyVFS
-from main.modules.node import MyVFSDir, MyVFSFile
+from main.modules.node import MyVFSDir
 
 class DirectoryTests(unittest.TestCase):
     def setUp(self):
-        self.vfs = MyVFS()
+        self.vfs = MyVFS("TestVFS:")
+        self.root_dir = self.vfs.root.name
 
     def test_create_dir(self):
         created_dir = self.vfs.create_directory("/juuso")
@@ -35,20 +36,20 @@ class DirectoryTests(unittest.TestCase):
         parent_dir = self.vfs.create_directory("/juuso")
         child_dir1 = self.vfs.create_directory("/juuso/testi")
         child_dir2 = self.vfs.create_directory("/juuso/testi/keissit")
-        parent_dir, name = self.vfs._find_parent_dir("/juuso/testi/keissit")
+        parent_dir, name = self.vfs._find_parent_dir(self.vfs.root, "/juuso/testi/keissit")
 
         self.assertEqual(parent_dir, child_dir1)
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_list_directories_only_root(self, mock_output):
         self.vfs.list_directories()
-        self.assertEqual(mock_output.getvalue().strip(), "/")
+        self.assertEqual(mock_output.getvalue().strip(), self.root_dir)
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_list_directories_one(self, mock_output):
         self.vfs.create_directory("/juuso")
         self.vfs.list_directories()
-        self.assertEqual(mock_output.getvalue().strip(), "/\n|juuso")
+        self.assertEqual(mock_output.getvalue().strip(), f"{self.root_dir}\n|juuso")
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_list_directories_nested(self, mock_output):
@@ -56,7 +57,7 @@ class DirectoryTests(unittest.TestCase):
         self.vfs.create_directory("/juuso/kuvat")
         self.vfs.create_directory("/juuso/testit")
         self.vfs.list_directories()
-        self.assertEqual(mock_output.getvalue().strip(), "/\n|juuso\n||kuvat\n||testit")
+        self.assertEqual(mock_output.getvalue().strip(), f"{self.root_dir}\n|juuso\n||-kuvat\n||-testit")
 
 
 if __name__ == '__main__':

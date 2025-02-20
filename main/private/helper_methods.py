@@ -1,20 +1,25 @@
 from main.modules.node import MyVFSDir, MyVFSFile
 
+class VFSHelper(object):
 
 
-def recursive_dir_traversal(folder: MyVFSDir, iteration: int):
-    for name, child in folder.child_dirs.items():
-        print(f"|{'|-'*iteration}{name}")
-        recursive_dir_traversal(child, iteration+1)
+    def _traverse_and_print(self, folder: MyVFSDir, prefix_line=""):
+        for index, child in enumerate(folder.child_dirs.items()):
+            name, child_obj = child
+            last = index == len(folder.child_dirs) - 1
+            symbol = '└──' if last else '├──'
 
-def find_parent_dir(root: MyVFSDir, path: str) -> (MyVFSDir, str):
-    path, name = path.rsplit("/", 1)
-    path_parts = path.strip("/").split("/")
-    parent = root
-    for part in path_parts:
-        if part in parent.child_dirs:
-            parent = parent.child_dirs[part]
-    return parent, name
+            print(f"{prefix_line}{symbol}{name}")
 
-def find_file_by_name(self, name: str) -> MyVFSFile:
-    pass
+            folder_line = '     ' if last else '│    '
+            self._traverse_and_print(child_obj, prefix_line + folder_line)
+
+    @staticmethod
+    def _find_parent_dir(root: MyVFSDir, path: str) -> (MyVFSDir, str):
+        path, name = path.rsplit("/", 1)
+        path_parts = path.strip("/").split("/")
+        parent = root
+        for part in path_parts:
+            if part in parent.child_dirs:
+                parent = parent.child_dirs[part]
+        return parent, name

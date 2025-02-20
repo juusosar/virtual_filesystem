@@ -33,7 +33,8 @@ class MyVFSDir(MyVFSNode):
         self.contents: dict[str, MyVFSFile] = {}
 
     def list_contents(self):
-        pass
+        for file in self.contents.values():
+            print(f"{file.name} - {file.size} - {file.created} - {file.modified}")
 
 
 class MyVFSFile(MyVFSNode):
@@ -45,4 +46,4 @@ class MyVFSFile(MyVFSNode):
     """
     def __init__(self, name: str, parent_dir: MyVFSDir, data: str):
         super().__init__(name, parent_dir)
-        self.contents = data
+        self.data = data

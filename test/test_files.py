@@ -12,7 +12,7 @@ class FileTests(unittest.TestCase):
 
     def test_read_file(self):
         self.vfs.create_file("/juuso/test.txt", "Hello World!")
-        self.assertEqual(self.vfs.read_file("/juuso/text.txt"), "Hello World!")
+        self.assertEqual(self.vfs.read_file("/juuso/test.txt"), "Hello World!")
 
 
 
