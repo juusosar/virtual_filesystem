@@ -1,12 +1,13 @@
 import unittest
 from io import StringIO
 from unittest.mock import patch
-from main.core import MyVFS
-from main.modules.node import MyVFSDir
+from VFS_client import MyVFS
+from VFS_client.src import MyVFSDir
 
 class DirectoryTests(unittest.TestCase):
     def setUp(self):
-        self.vfs = MyVFS("TestVFS:")
+        self.vfs = MyVFS()
+        self.vfs.create_directory("test")
         self.root_dir = self.vfs.root.name
 
     def test_create_dir(self):
@@ -40,6 +41,8 @@ class DirectoryTests(unittest.TestCase):
 
         self.assertEqual(parent_dir, child_dir1)
 
+    def test_absolute_path(self):
+
     @patch('sys.stdout', new_callable=StringIO)
     def test_list_directories_only_root(self, mock_output):
         self.vfs.list_directories()
@@ -58,6 +61,14 @@ class DirectoryTests(unittest.TestCase):
         self.vfs.create_directory("/juuso/testit")
         self.vfs.list_directories()
         self.assertEqual(mock_output.getvalue().strip(), f"{self.root_dir}\n|juuso\n||-kuvat\n||-testit")
+
+    def test_list_contents(self):
+        self.vfs.list_directories()
+        print(self.vfs.root.size)
+        self.vfs.create_directory(f"/juuso")
+        self.vfs.list_directories()
+        print(self.vfs.root.size)
+
 
 
 if __name__ == '__main__':

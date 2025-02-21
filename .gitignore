@@ -1,2 +1,6 @@
 .idea
 .venv
+
+VFS_client/src/*/__pycache__
+test/__pycache__
+*/__pycache__

@@ -1,25 +1,46 @@
 from datetime import datetime
-from main.modules.node import MyVFSDir, MyVFSFile
-from main.private.helper_methods import VFSHelper
-
+from VFS_client.src import MyVFSDir, MyVFSFile
+from VFS_client.src import VFSHelper
 
 class MyVFS(VFSHelper):
 
-    def __init__(self, root_dir_name: str):
-        self.root = MyVFSDir(root_dir_name, parent_dir=None)
+    def __init__(self):
+        self.root = MyVFSDir("/", parent_dir=None)
         self.current = self.root
 
+    def change_active_directory(self, path: str) -> str:
+        if not self._check_path(path):
+            raise SyntaxError("Invalid path")
+
+        match path:
+            case '.' | '':
+                return ''
+            case '..' | '../':
+                # FIXME: Jos on usea peräkkäin
+                self.current = self.current.parent_dir
+                return self.current.abs_path
+            case _:
+                self.current, name = self._find_parent_dir(self.current, path)
+                return self.current.abs_path
+
     def create_file(self, path: str, content: str="") -> MyVFSFile:
+        if not self._check_path(path):
+            raise SyntaxError("Invalid path")
+
         parent_dir, name = self._find_parent_dir(self.root, path)
         print("Name of created file:", name)
 
         new_file = MyVFSFile(name=name, parent_dir=parent_dir, data=content)
         parent_dir.contents[name] = new_file
+        parent_dir.set_size()
 
         return new_file
 
 
     def create_directory(self, path: str) -> MyVFSDir:
+        if not self._check_path(path):
+            raise SyntaxError("Invalid path")
+
         parent_dir, name = self._find_parent_dir(self.root, path)
 
         new_dir = MyVFSDir(name=name, parent_dir=parent_dir)
@@ -34,18 +55,28 @@ class MyVFS(VFSHelper):
         pass
 
     def delete_file(self, path: str) -> None:
+        if not self._check_path(path):
+            raise SyntaxError("Invalid path")
+
         parent_dir, name = self._find_parent_dir(self.root, path)
 
         parent_dir.contents.pop(name)
+        parent_dir.set_size()
 
     def rename_file(self, path: str, new_name: str) -> None:
+        if not self._check_path(path):
+            raise SyntaxError("Invalid path")
+
         parent_dir, name = self._find_parent_dir(self.root, path)
 
-        file_obj = parent_dir.contents[name]
+        file_obj: MyVFSFile = parent_dir.contents[name]
         file_obj.name = new_name
         file_obj.modified = datetime.now()
 
     def read_file(self, path: str):
+        if not self._check_path(path):
+            raise SyntaxError("Invalid path")
+
         parent_dir, name = self._find_parent_dir(self.root, path)
 
         print("Data from the file:", parent_dir.contents[name].data)
@@ -63,19 +94,25 @@ class MyVFS(VFSHelper):
             a+ -> append to new file
         :return:
         """
+        if not self._check_path(path):
+            raise SyntaxError("Invalid path")
+
         parent_dir, name = self._find_parent_dir(self.root, path)
 
-        file_obj = parent_dir.contents[name]
+        file_obj: MyVFSFile = parent_dir.contents[name]
         file_obj.data = content
         file_obj.modified = datetime.now()
+        file_obj.set_size()
+
+        parent_dir.set_size()
 
     def list_directories(self) -> None:
-        print(f"{self.root.name}")
-        self._traverse_and_print(self.root)
+        print(f"{self.current.name}/")
+        self._traverse_and_print(self.current)
 
 
 if __name__ == "__main__":
-    vfs = MyVFS("VFS:")
+    vfs = MyVFS()
     vfs.create_directory("/juuso")
     vfs.create_directory("/kata")
     vfs.create_directory("/perhe")

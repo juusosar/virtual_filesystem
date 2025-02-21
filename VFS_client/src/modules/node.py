@@ -1,5 +1,5 @@
 from datetime import datetime
-
+import sys
 
 class MyVFSNode:
     """
@@ -14,10 +14,12 @@ class MyVFSNode:
         self.name = name
         self.parent_dir = parent_dir
         self.created = self.modified = datetime.now()
-        self.size = None
+        self.size = 0
+        self.abs_path = f"{self.parent_dir.abs_path if parent_dir is not None else ''}/{self.name}"
 
-    def get_metadata(self):
-        pass
+    def print_metadata(self):
+        print(f"{self.name} - {self.size} - {self.created} - {self.modified}")
+
 
 
 class MyVFSDir(MyVFSNode):
@@ -32,9 +34,21 @@ class MyVFSDir(MyVFSNode):
         self.child_dirs: dict[str, MyVFSDir] = {}
         self.contents: dict[str, MyVFSFile] = {}
 
-    def list_contents(self):
+    def list_files(self):
         for file in self.contents.values():
-            print(f"{file.name} - {file.size} - {file.created} - {file.modified}")
+            file.print_metadata()
+
+    def list_children(self):
+        for folder in self.child_dirs.values():
+            folder.print_metadata()
+
+    def set_size(self):
+        for file in self.contents.values():
+            self.size += file.size
+        for folder in self.child_dirs.values():
+            self.size += folder.set_size()
+
+        return self.size
 
 
 class MyVFSFile(MyVFSNode):
@@ -47,3 +61,7 @@ class MyVFSFile(MyVFSNode):
     def __init__(self, name: str, parent_dir: MyVFSDir, data: str):
         super().__init__(name, parent_dir)
         self.data = data
+        self.size = sys.getsizeof(data)
+
+    def set_size(self):
+        self.size = sys.getsizeof(self.data)
