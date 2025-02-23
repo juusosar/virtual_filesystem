@@ -1,5 +1,6 @@
-from datetime import datetime
 import sys
+from datetime import datetime
+
 
 class MyVFSNode:
     """
@@ -13,12 +14,11 @@ class MyVFSNode:
     def __init__(self, name: str, parent_dir):
         self.name = name
         self.parent_dir = parent_dir
-        self.created = self.modified = datetime.now()
+        self.created = self.modified = datetime.strftime(datetime.now(), '%d/%m/%Y %H:%M')
         self.size = 0
-        self.abs_path = f"{self.parent_dir.abs_path if parent_dir is not None else ''}/{self.name}"
 
     def print_metadata(self):
-        print(f"{self.name} - {self.size} - {self.created} - {self.modified}")
+        print(f"{self.name} - {self.size} bytes - {self.created} {f'- {self.modified}' if self.modified != self.created else ''}")
 
 
 
@@ -26,7 +26,7 @@ class MyVFSDir(MyVFSNode):
     """
     Directory structure for virtual filesystem.
 
-    Keeps list of the children directories and files in the directory both in a dictionary with names as keys and
+    Keeps list of the children directories and files in the directory both in a dictionary with names as keys.
     """
 
     def __init__(self, name, parent_dir):
@@ -34,15 +34,28 @@ class MyVFSDir(MyVFSNode):
         self.child_dirs: dict[str, MyVFSDir] = {}
         self.contents: dict[str, MyVFSFile] = {}
 
+    def list_all(self):
+        self.list_children()
+        self.list_files()
+
     def list_files(self):
+        print("\nFiles:")
         for file in self.contents.values():
             file.print_metadata()
 
     def list_children(self):
+        print("\nDirectories:")
         for folder in self.child_dirs.values():
             folder.print_metadata()
 
+    def get_filenames(self):
+        return [file for file in self.contents.keys()]
+
+    def get_children_names(self):
+        return [folder for folder in self.child_dirs.keys()]
+
     def set_size(self):
+        self.size = 0
         for file in self.contents.values():
             self.size += file.size
         for folder in self.child_dirs.values():

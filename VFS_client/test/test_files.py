@@ -16,8 +16,7 @@ class FileTests(unittest.TestCase):
         self.assertEqual(self.vfs.read_file("test.txt"), "Hello World!")
 
     def test_create_file_fail(self):
-        self.vfs.create_file("/test/eiole/test.txt", "Hello World!")
-        self.assertRaises(KeyError)
+        self.assertRaises(FileNotFoundError, self.vfs.create_file, "/test/eiole/test.txt", "Hello World!")
 
     def test_read_file(self):
         self.vfs.create_file("/test/test.txt", "Hello World!")
