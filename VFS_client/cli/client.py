@@ -1,14 +1,15 @@
+#!/usr/bin/env python
+
 from cmd import Cmd
-import pyreadline3 as readline
 from typing import IO
 import shlex
 
-import commands
-from VFS_client import MyVFS
+import pyreadline3 as readline
+
+from VFS_client import MyVFS, CLICommands
 
 
-
-class CLI(Cmd):
+class CLI(Cmd, CLICommands):
     drive = '/'
     intro = 'CLI for an in-memory virtual unix-style filesystem.\nYou can list available commands by typing "?" and get more information by typing "help <command>"\n\nMounting filesystem drive...'
     prompt = f'{drive}>'
@@ -18,17 +19,17 @@ class CLI(Cmd):
         self.vfs = None
 
         # Initialize all command parsers
-        self.cd_parser = commands.create_cd_parser()
-        self.ls_parser = commands.create_ls_parser()
-        self.touch_parser = commands.create_touch_parser()
-        self.mkdir_parser = commands.create_mkdir_parser()
-        self.rmdir_parser = commands.create_rmdir_parser()
-        self.pwd_parser = commands.create_pwd_parser()
-        self.cp_parser = commands.create_cp_parser()
-        self.mv_parser = commands.create_mv_parser()
-        self.rm_parser = commands.create_rm_parser()
-        self.find_parser = commands.create_find_parser()
-        self.cat_parser = commands.create_cat_parser()
+        self.cd_parser = self.create_cd_parser()
+        self.ls_parser = self.create_ls_parser()
+        self.touch_parser = self.create_touch_parser()
+        self.mkdir_parser = self.create_mkdir_parser()
+        self.rmdir_parser = self.create_rmdir_parser()
+        self.pwd_parser = self.create_pwd_parser()
+        self.cp_parser = self.create_cp_parser()
+        self.mv_parser = self.create_mv_parser()
+        self.rm_parser = self.create_rm_parser()
+        self.find_parser = self.create_find_parser()
+        self.cat_parser = self.create_cat_parser()
 
     """
     Operative and configurative commands for the CLI application

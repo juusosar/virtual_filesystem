@@ -1,9 +1,9 @@
 import re
 from datetime import datetime
+
 from VFS_client.src import MyVFSDir, MyVFSFile
 
 class VFSHelper(object):
-
 
     def _traverse_and_print(self, folder: MyVFSDir, prefix_line="", files=False) -> None:
         """
@@ -11,7 +11,6 @@ class VFSHelper(object):
 
         :param folder: Start directory for the traversal.
         :param prefix_line: Prefix symbols to add in recursive executions.
-        :return:
         """
         for index, child in enumerate(folder.child_dirs.items()):
             name, child_obj = child
@@ -27,6 +26,12 @@ class VFSHelper(object):
             self._traverse_and_print(child_obj, prefix_line + folder_line, files=files)
 
     def _find_file_by_path(self, root: MyVFSDir, path: str) -> MyVFSFile:
+        """
+
+        :param root:
+        :param path:
+        :return:
+        """
         if not "/" in path:
             return root.contents[path]
 
@@ -90,6 +95,12 @@ class VFSHelper(object):
         return parent_dirs[-1], name
 
     def _find_directory(self, root: MyVFSDir, path: str) -> MyVFSDir:
+        """
+
+        :param root:
+        :param path:
+        :return:
+        """
         folder = self._traverse_directory_tree(root, path)
 
         if not folder:
@@ -118,6 +129,14 @@ class VFSHelper(object):
 
     @staticmethod
     def _write_to_file(parent_dir: MyVFSDir, name: str, content: str, append=False) -> None:
+        """
+
+        :param parent_dir:
+        :param name:
+        :param content:
+        :param append:
+        :return:
+        """
         file: MyVFSFile = parent_dir.contents.get(name)
 
         if append: file.data += content
@@ -155,7 +174,13 @@ class VFSHelper(object):
         Checks if the given path is a valid path or name using regular expression.
         Following basic Unix-style file path naming scheme.
 
-        Example: /home/user/juuso/testi.txt
+        Accepts:
+                /home/user/juuso/testi.txt \n
+                testi.txt \n
+                . (for current directory path)
+
+        Doesn't accept:
+                home/user/juuso/testi.txt
 
         :param path: Path to be checked.
         :return: Boolean indicating if the path is valid.

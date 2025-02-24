@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from VFS_client.src import MyVFSDir, MyVFSFile, VFSHelper
 
 class MyVFS(VFSHelper):
@@ -6,6 +7,7 @@ class MyVFS(VFSHelper):
     def __init__(self):
         self.root = MyVFSDir('/', parent_dir=None)
         self.current = self.root
+        # TODO: Threading lock
 
     def change_active_directory(self, path: str) -> str:
         """
@@ -14,14 +16,16 @@ class MyVFS(VFSHelper):
         If path is empty or '.', doesn't do anything.
 
         :param path: Path (or directory name if subdirectory) to change the active directory to.
-        :return:
+        :return: Absolute path of the new current directory as string.
+
+        :raises SyntaxError: If given path is not valid.
         """
         match path:
             case '.' | '' | self.current.name:
                 return ''
 
             case '..' | '../':
-                # FIXME: Jos on usea peräkkäin. CLI clienttiin?
+                # Does not support chaining '../' unfortunately
                 if not self.current.parent_dir:
                     return ''
                 self.current = self.current.parent_dir
@@ -81,15 +85,15 @@ class MyVFS(VFSHelper):
 
     def delete_directory(self, path: str) -> None:
         # TODO
-        pass
+        print("Not implemented!")
 
     def move_file(self, source_path: str, destination_path: str):
         # TODO
-        pass
+        print("Not implemented!")
 
     def copy_file(self, source_path: str, destination_path: str):
         # TODO
-        pass
+        print("Not implemented!")
 
     def delete_file(self, path: str) -> None:
         """
@@ -131,11 +135,12 @@ class MyVFS(VFSHelper):
 
         parent_dir[new_name] = parent_dir.pop(name)
 
-    def read_file(self, path: str) -> None:
+    def read_file(self, path: str) -> str:
         """
         Read file contents.
 
         :param path: Path to the file to read.
+        :return content: File contents as string representation.
 
         :raises FileNotFoundError: If supplied file can't be found.
         :raises SyntaxError: If given path is not valid.

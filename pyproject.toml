@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "VFS_client"
+version = "0.1.0"
+authors = [
+    {name = "Juuso Särkelä", email = "juuso.sarkela@outlook.com"}
+]
+description = "A simple virtual filesystem client and API mimicking the usage of a unix based filesystem"
+requires-python = ">=3.12"
+dependencies = [
+    "pyreadline3",
+]
+
+[project.scripts]
+mount = "VFS_client.cli.client:run"
