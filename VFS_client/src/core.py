@@ -57,7 +57,6 @@ class MyVFS(VFSHelper):
         :raises SyntaxError: If given path is not valid.
         """
         parent_dir, name = self._find_parent_dir(self.current, path)
-        print("Name of created file:", name)
 
         new_file = MyVFSFile(name=name, parent_dir=parent_dir, data=content)
         parent_dir.contents[name] = new_file

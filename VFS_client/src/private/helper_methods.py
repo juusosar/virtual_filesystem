@@ -96,9 +96,10 @@ class VFSHelper(object):
 
     def _find_directory(self, root: MyVFSDir, path: str) -> MyVFSDir:
         """
+        Find directory by path from the supplied directory.
 
-        :param root:
-        :param path:
+        :param root: Directory root object for the directory traversal.
+        :param path: Path of the
         :return:
         """
         folder = self._traverse_directory_tree(root, path)
@@ -130,12 +131,12 @@ class VFSHelper(object):
     @staticmethod
     def _write_to_file(parent_dir: MyVFSDir, name: str, content: str, append=False) -> None:
         """
+        Helper function for writing to file object.
 
-        :param parent_dir:
-        :param name:
-        :param content:
-        :param append:
-        :return:
+        :param parent_dir: Parent directory of the object.
+        :param name: Name of the file.
+        :param content: Content to write to the file.
+        :param append: Flag to indicate if contents should be appended to the file.
         """
         file: MyVFSFile = parent_dir.contents.get(name)
 
