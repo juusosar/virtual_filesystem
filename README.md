@@ -55,7 +55,7 @@ as attributes for simple and efficient directory traversal and directory listing
 The file structuring inside the directories on the other hand is implemented by a hashmap in the form of a dictionary,
 with the file names as keys and the file contents as values.
 
-Directories can be traversed recursively since they have references to their subdirectories and their parent directory.
+Directories can be traversed recursively since they have references to their subdirectories and their parent directory. Since both the directories and files are stored in dictionary objects, it enables fast file/directory lookup when the parent directory is known.
 
 I wanted to use only built-in libraries as much as I can to keep the project lightweight on dependencies.
 External library usage: ``setuptools`` and ``pyreadline3``. ``setuptools`` for easily installing the project, 
@@ -68,7 +68,7 @@ Python is not the most efficient language to do this challenge in
 but in my case it was the language of choice since it is the one I am the most proficient in.
 
 Regarding performance, I didn't have the opportunity to test the filesystem functionality in large sets of objects.
-There are certainly performance upgrades I could implement to the directory traversal algorithm
+There are certainly performance upgrades I could implement to the directory traversal algorithm.
 
 The filesystem does not work in tandem with or can't mock an actual filesystem (á la pyfakefs).
 
